@@ -74,6 +74,7 @@ class PostController extends Controller
             'title'         => 'required|string|max:100',
             'slug'          => 'required|string|max:100|unique:posts',
             'category_id'   => 'required|integer|exists:categories,id ',
+
             'image'         => 'url|max:100',
             'uploaded_img'  => 'image|max:1024',
             'content'       => 'string',
@@ -89,11 +90,14 @@ class PostController extends Controller
         $post = new Post;
         $post->slug             = $data['slug'];
         $post->title            = $data['title'];
+        $post->category_id      = $data['category_id'];
         $post->image            = $data['image'];
         $post->uploaded_img     = $img_path;
         $post->content          = $data['content'];
         $post->excerpt          = $data['excerpt'];
         $post->save();
+
+        $post->tags()->attach($data['tags']);
 
         // ridirezionare (e non ritonare una view)
         return redirect()->route('admin.posts.show', ['post' => $post]);
@@ -118,6 +122,16 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+
+        $categories = Category::all('id', 'name');
+        $tags       = Tag::all();
+
+        return view('admin.posts.edit', [
+            'post'          => $post,
+            'categories'    => $categories,
+            'tags'          => $tags,
+        ]);
+
         return view('admin.posts.edit', compact('post'));
     }
 
