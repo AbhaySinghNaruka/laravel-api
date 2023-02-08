@@ -36,7 +36,7 @@
                 <label for="category_id" class="form-label">Categoria</label>
                 <select type="url" class="form-control @error('category_id') is-invalid @enderror" id="category_id" name="category_id">
                     @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" @if ($category->id == old('category_id')) selected @endif>{{ $category->name }}</option>>
                     @endforeach
                 </select>
                 <div class="invalid-feedback">
@@ -56,25 +56,22 @@
                     <div class="form-check">
                         <input
                             id="tag-{{ $tag->id}}"
-                            class="form-check-input @error('image') is-invalid @enderror"
+                            class="form-check-input"
                             type="checkbox"
                             value="{{ $tag->id}}"
                             name="tags[]"
+                            @if (in_array($tag->id, old('tags', []))) checked @endif
                             >
                         <label class="form-check-label" for="tag-{{ $tag->id}}">
                             {{ $tag->name }}
                         </label>
-                        <div class="invalid-feedback">
-                            @error('tags')
-                                <ul>
-                                    @foreach ($errors->get('category_id') as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            @enderror
-                        </div>
                     </div>
                 @endforeach
+                @if ($errors->has('tags') || $errors->has('tags.*'))
+                    <div class="invalid-feedback">
+                        Ci sono problemi con tags
+                    </div>
+                @endif
             </div>
 
             <div class="mb-3">

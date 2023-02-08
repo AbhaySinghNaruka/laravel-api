@@ -22,7 +22,7 @@ class PostSeeder extends Seeder
         $tags = Tag::all()->pluck('id');
         $tagCount = count($tags);
 
-        for ($i = 0; $i < 1000; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $title = $faker->words(rand(3, 7), true);
 
             $number = rand(0, 56);

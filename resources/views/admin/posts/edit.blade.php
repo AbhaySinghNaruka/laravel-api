@@ -57,11 +57,11 @@
                     <div class="form-check">
                         <input
                             id="tag-{{ $tag->id}}"
-                            class="form-check-input @error('image') is-invalid @enderror"
+                            class="form-check-input @error('tag') is-invalid @enderror"
                             type="checkbox"
                             value="{{ $tag->id }}"
                             name="tags[]"
-                            @if (in_array($tag->id, old('tags',$post->tags->pluck('id')->all()))) checked @endif
+                            @if (in_array($tag->id, old('tags', $post->tags->pluck('id')->all()))) checked @endif
                             >
                         <label class="form-check-label" for="tag-{{ $tag->id}}">
                             {{ $tag->name }}

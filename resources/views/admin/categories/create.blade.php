@@ -6,7 +6,15 @@
             @csrf
             <div class="mb-3">
                 <label for="name" class="form-label">Nome</label>
-                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old ('name') }}">
+                <input
+                    type="text"
+                    class="form-control @error('name') is-invalid @enderror"
+                    id="name"
+                    name="name"
+                    value="{{ old ('name') }}"
+                    data-sluger="title"
+                >
+
                 <div class="invalid-feedback">
                     @error('name')
                     <ul>
@@ -22,7 +30,14 @@
                 <label for="slug" class="form-label">Slug</label>
                 <div class="row">
                     <div class="col-9">
-                        <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug" name="slug" value="{{ old('slug') }}">
+                        <input
+                            type="text"
+                            class="form-control @error('slug') is-invalid @enderror"
+                            id="slug"
+                            name="slug"
+                            value="{{ old('slug') }}"
+                            data-sluger="slug"
+                        >
                         <div class="invalid-feedback">
                             @error('slug')
                             <ul>
@@ -34,7 +49,14 @@
                         </div>
                     </div>
                 <div class="col-3">
-                    <button type="button" class="btn btn-primary">Generate</button>
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-sluger="button"
+                        data-sluger_url="{{ route('admin.categories.slug') }}"
+                    >
+                        Generate
+                    </button>
                 </div>
                 </div>
             </div>

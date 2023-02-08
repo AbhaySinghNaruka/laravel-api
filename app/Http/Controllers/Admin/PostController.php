@@ -18,11 +18,14 @@ class PostController extends Controller
             'string',
             'max:100',
         ],
-        'title'    => 'required|string|max:100',
-        'image'    => 'url|max:100',
+        'title'         => 'required|string|max:100',
+        'category_id'   => 'required|integer|exists:categories,id ',
+        'tags'          => 'array',
+        'tags.*'        => 'integer|exists:tags,id',
+        'image'         => 'url|max:100',
         'uploaded_img'  => 'image|max:1024',
-        'content'  => 'string',
-        'excerpt'  => 'string',
+        'content'       => 'nullable|string',
+        'excerpt'       => 'nullable|string',
     ];
 
     /**
@@ -67,19 +70,8 @@ class PostController extends Controller
     {
 
         // validation
-        // $this->validations['slug'][] = 'unique:posts';
-        // $request->validate($this->validations);
-
-        $request->validate([
-            'title'         => 'required|string|max:100',
-            'slug'          => 'required|string|max:100|unique:posts',
-            'category_id'   => 'required|integer|exists:categories,id ',
-
-            'image'         => 'url|max:100',
-            'uploaded_img'  => 'image|max:1024',
-            'content'       => 'string',
-            'excerpt'       => 'string',
-        ]);
+        $this->validations['slug'][] = 'unique:posts';
+        $request->validate($this->validations);
 
         $data = $request->all();
 
@@ -145,27 +137,18 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         // validation
-        // $this->validations['slug'][] = Rule::unique('posts')->ignore($post);
-        // $request->validate($this->validations);
-
-        $request->validate([
-            'slug'     => [
-                'required',
-                'string',
-                'max:100',
-                Rule::unique('posts')->ignore($post),
-            ],
-            'title'         => 'required|string|max:100',
-            'image'         => 'url|max:100',
-            'uploaded_img'  => 'image|max:1024',
-            'content'       => 'string',
-            'excerpt'       => 'string',
-        ]);
+        $this->validations['slug'][] = Rule::unique('posts')->ignore($post);
+        $request->validate($this->validations);
 
         $data = $request->all();
 
-        $img_path = Storage::put('uploads', $data['uploaded_img']);
-        Storage::delete($post->uploaded_img);
+        if (isset($data['uploaded_img'])) {
+            $img_path = Storage::put('uploads', $data['uploaded_img']);
+            Storage::delete($post->uploaded_img);
+        } else {
+            $img_path = $post->uploaded_img;
+        }
+
 
         // salvare i dati nel db
         $post->slug             = $data['slug'];
@@ -176,6 +159,7 @@ class PostController extends Controller
         $post->excerpt          = $data['excerpt'];
         $post->update();
 
+        $post->tags()->sync($data['tags']);
         // ridirezionare (e non ritonare una view)
         return redirect()->route('admin.posts.show', ['post' => $post]);
     }

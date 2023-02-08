@@ -121,9 +121,25 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $defaultCategory = Category::where('slug', 'uncategorized')->first();
 
+        foreach ($category->posts as $post) {
+            $post->category_id = $defaultCategory->id;
+            $post->update();
+        }
         $category->delete();
 
         return redirect()->route('admin.categories.index')->with('success_delete', $category);
+    }
+
+    public function slug(Request $request)
+    {
+        $title = $request->query('title');
+
+        $slug = Category::getSlug($title);
+
+        return response()->json([
+            'slug'  => $slug,
+        ]);
     }
 }
